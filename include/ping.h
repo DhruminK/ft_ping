@@ -17,14 +17,18 @@
 
 typedef struct s_icmp
 {
-	uint16_t	id;
-	uint16_t	seq;
-}			t_icmp;
+	uint16_t		id;
+	uint16_t		seq;
+	size_t			data_size;
 
-int			ft_ping_parse_addr(char *buf, char dst_addr[INET_ADDRSTRLEN]);
-int			ft_ping_create_icmp_req(uint8_t **req, size_t data_size, t_icmp *icmp_info);
+	struct timeval	tv;
+	uint8_t			*data;
+}					t_icmp;
 
-void		*ft_memcpy(void *dst, void *src, size_t n);
-void		*ft_memset(void *b, int c, size_t n);
+int					ft_ping_parse_addr(char *buf, char dst_addr[INET_ADDRSTRLEN]);
+int					ft_ping_create_icmp_req(uint8_t **msg, t_icmp *req_info);
+
+void				*ft_memcpy(void *dst, void *src, size_t n);
+void				*ft_memset(void *b, int c, size_t n);
 
 #endif

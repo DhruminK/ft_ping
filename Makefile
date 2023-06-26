@@ -15,7 +15,7 @@ CFLAGS = -Wall -Wextra -Werror
 NAME = ft_ping
 
 PARSER = ft_parse_addr.c
-SOLVER = ft_ping_icmp.c
+SOLVER = ft_ping_icmp_echo_req.c
 MATH_FUNC = helper_func.c
 MAIN = ping.c
 
