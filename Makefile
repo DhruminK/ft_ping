@@ -6,7 +6,7 @@
 #    By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/09 16:19:24 by dkhatri           #+#    #+#              #
-#    Updated: 2023/05/09 18:54:15 by dkhatri          ###   ########.fr        #
+#    Updated: 2023/06/26 19:17:42 by dkhatri          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,10 @@ NAME = ft_ping
 
 PARSER = ft_parse_addr.c
 SOLVER = ft_ping_icmp_echo_req.c
-MATH_FUNC = helper_func.c
+HELPER_FUNC = helper_func.c icmp_helper.c ft_print_helper.c
 MAIN = ping.c
 
-SRC = $(PARSER) $(SOLVER) $(MATH_FUNC) $(MAIN)
+SRC = $(PARSER) $(SOLVER) $(HELPER_FUNC) $(MAIN)
 OBJ = $(SRC:.c=.o)
 
 INC = ping.h

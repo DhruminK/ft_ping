@@ -1,86 +1,65 @@
-#include "ping.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_ping_icmp_echo_req.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/26 14:06:40 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/26 14:40:07 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static void	ft_ping_icmp_one_cadd(uint16_t *checksum, uint16_t buf)
+#include "icmp.h"
+
+static int	ft_ping_add_timestamp(t_icmp *req, uint8_t *msg)
 {
-	uint32_t	c;
-	if (!checksum || !buf)
-		return ;
-	c = (*checksum) + buf;
-	(*checksum) = (c & ((0x1 << 16) - 1));
-	if (c & (0x1 << 16))
-		ft_ping_icmp_one_cadd(checksum, 0x1);
-}
-
-void	ft_ping_icmp_checksum(uint8_t *buf, uint16_t *checksum, size_t bs)
-{
-	size_t		i;
-	uint16_t	ret;
-	uint16_t	ret1;
-
-	if (!buf || !checksum || !bs)
-		return ;
-	ret1 = 0;
-	while (i < bs)
-	{
-		ret = 0;
-		if (i != bs - 1)
-			ret = buf[i + 1];
-		ft_ping_icmp_one_cadd(&ret1, (buf[i] << 8) | ret);
-		i += 2;
-	}
-	ret1 = ~(ret1);
-	*checksum = htons(ret1);
-}
-
-void	ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val)
-{
-	int		i;
-	uint8_t	*v;
-
-	v = (uint8_t *)&val;
-	if (BYTE_ORDER == BIG_ENDIAN)
-		ft_memcpy(msg, v, sizeof(uint8_t) * 8);
-	else
-	{
-		i = -1;
-		while (++i < 8)
-			msg[7 - i] = v[i];
-	}
-}
-
-static int	ft_ping_add_timestamp(t_icmp *req_info, uint8_t *msg)
-{
-	if (!req_info)
+	if (!req || !msg)
 		return (-1);
-	if (gettimeofday(&(req_info->tv), 0) == -1)
+	if (gettimeofday(&(req->tv), 0) == -1)
 		return (-1);
-	ft_ping_64bit_little_endian((msg) + FT_PING_ICMP_HDR_SIZE
-		, req_info->tv.tv_sec);
-	ft_ping_64bit_little_endian((msg) + FT_PING_ICMP_HDR_SIZE
-		+ sizeof(uint64_t), req_info->tv.tv_usec);
-	ft_memcpy(req_info->data, msg + FT_PING_ICMP_HDR_SIZE, sizeof(uint64_t) * 2);
+	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR, req->tv.tv_sec);
+	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR + sizeof(uint64_t),
+		req->tv.tv_usec);
+	ft_memcpy(req->data, msg + FT_ICMP_HDR, sizeof(uint64_t) * 2);
 	return (0);
 }
 
-int	ft_ping_create_icmp_req(uint8_t **msg, t_icmp *req_info)
+static void	ft_icmp_init_echo_hdr(uint8_t *msg, t_icmp *req)
 {
-	size_t			p_size;
-	struct icmphdr	*icmphdr;
+	uint16_t	*tmp;
 
-	if (!req_info || !(req_info->data_size) || !msg)
+	if (!msg || !req)
+		return ;
+	msg[0] = ICMP_ECHO;
+	msg[1] = 0;
+	tmp = (uint16_t *)(msg + 2);
+	*tmp = 0;
+	tmp = (uint16_t *)(msg + 4);
+	*tmp = htons(req->id);
+	tmp = (uint16_t *)(msg + 6);
+	*tmp = htons(req->seq);
+}
+
+int	ft_ping_create_icmp_req(uint8_t **msg, t_icmp *req)
+{
+	size_t		p_size;
+	uint16_t	*checksum;
+
+	if (!req || !msg || !(req->data_size))
 		return (-1);
-	p_size = req_info->data_size + FT_PING_ICMP_HDR_SIZE;
-	if (!(req_info->data = (uint8_t *)malloc(sizeof(uint8_t) * req_info->data_size)))
+	p_size = FT_ICMP_HDR + req->data_size;
+	req->data = (uint8_t *)malloc(sizeof(uint8_t) * req->data_size);
+	if (!req->data)
 		return (-1);
-	if (!(*msg = (uint8_t *)malloc(sizeof(uint8_t) * p_size)))
+	*msg = (uint8_t *)malloc(sizeof(uint8_t) * p_size);
+	if (!*msg)
 		return (-1);
-	icmphdr = (struct icmphdr *)(*msg);
-	icmphdr->type = ICMP_ECHO;
-	icmphdr->code = 0;
-	icmphdr->un.echo.id = htons(req_info->id);
-	icmphdr->un.echo.sequence = htons(req_info->seq);
-	if (ft_ping_add_timestamp(req_info, *msg) == -1)
+	ft_memcpy(req->data, *msg + FT_ICMP_HDR, sizeof(uint8_t) * req->data_size);
+	ft_icmp_init_echo_hdr(*msg, req);
+	if (ft_ping_add_timestamp(req, *msg) == -1)
 		return (-1);
-	ft_ping_icmp_checksum(*msg, &(icmphdr->checksum), p_size);
+	checksum = (uint16_t *)((*msg) + 2);
+	ft_icmp_checksum(*msg, p_size, checksum);
 	return (0);
 }

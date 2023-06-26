@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_parse_addr.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/26 14:32:21 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/26 15:16:58 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ping.h"
 
 static int	ft_ping_parse_addrinfo(struct addrinfo *res,
 				char dst_addr[INET_ADDRSTRLEN])
 {
 	int					ret;
-	struct	sockaddr_in	*s_addr;
+	struct sockaddr_in	*s_addr;
 
 	ret = 0;
 	while (res)
@@ -18,7 +30,7 @@ static int	ft_ping_parse_addrinfo(struct addrinfo *res,
 		ret = 1;
 		s_addr = (struct sockaddr_in *)res->ai_addr;
 		if (!(inet_ntop(AF_INET, (void *)&(s_addr->sin_addr),
-				dst_addr, INET_ADDRSTRLEN)))
+					dst_addr, INET_ADDRSTRLEN)))
 			return (-1);
 		break ;
 	}
@@ -56,6 +68,7 @@ int	ft_ping_parse_addr(char *buf, char dst_addr[INET_ADDRSTRLEN])
 		ft_memcpy(dst_addr, buf, sizeof(char) * INET_ADDRSTRLEN);
 	if (ret == 0)
 		ret = ft_ping_parse_host(buf, dst_addr);
+	printf("RET : %d\n", ret);
 	if (ret == -1 || ret == 0)
 		return (-1);
 	return (1);
