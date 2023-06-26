@@ -33,24 +33,59 @@ static int	ft_icmp_init_echo_reply_hdr(uint8_t *msg, size_t msg_size,
 	return (0);
 }
 
-static int	ft_icmp_init_echo_is_reply(t_icmp *reply)
+static void	ft_icmp_validate_data(t_icmp *req, t_icmp *rep, t_icmp_info *info)
 {
-	if (!reply || !(reply->data))
+	size_t	i;
+
+	if (!req || !rep || !info)
 		return (-1);
-	if (reply->type == ICMP_ECHO)
+	ft_memset(info->wrong_bytes);
+	i = 0;
+	while (i < res->data_size && i < rep->data_size)
+	{
+		if (req->data[i] != rep->data[i])
+			info->wrong_byte = 1;
+		i += 1;
+	}
+
+}
+
+static int	ft_icmp_validate_reply(t_icmp_info *info)
+{
+	uint8_t	*icmp;
+	t_icmp	*reply;
+	t_icmp	*req;
+
+	reply = &(info->rep);
+	*icmp = (info->msg_size) + FT_IP_HDR;
+	if (ft_icmp_init_echo_reply_hdr(icmp,
+			info->msg_size - FT_IP_HDR, reply) == -1)
+		return (-1);
+	if (info->type == ICMP_ECHO)
 		return (1);
-	if (reply->type == ICMP_ECHOREPLY)
-		return (2);
+	if (info->type != ICMP_ECHOREPLY)
+		return (0);
+	req = &(info->req);
+	if (req->id != res->id)
+		return (1);
+	info->err_flags = 0;
+	if (req->seq != res->seq)
+		info->err_flags |= FT_ERR_DUP;
+	if (req->data_size != res->data_size)
+		info->err_flags |= FT_INVALID_DSIZE;
+	ft_icmp_validate_data(req, reply, info);
 	return (0);
 }
 
-int	ft_icmp_process_icmp_reply(uint8_t *msg, size_t msg_size, t_icmp *reply)
+int	ft_icmp_process_icmp_reply(t_icmp_info *info, uint8_t flag)
 {
 	int	ret;
 
-	if (ft_icmp_ini_echo_reply_hdr(msg, msg_size, reply) == -1)
+	if (!info)
 		return (-1);
-	ret = ft_icmp_init_echo_is_reply(reply);
-	if (ret < 2)
-		return (ret);
+	ret = ft_icmp_validate_reply(info);
+	if (ret == -1)
+		return (-1);
+	ft_print_helper(info, flag);
+	return (0);
 }

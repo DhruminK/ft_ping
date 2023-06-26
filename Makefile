@@ -16,10 +16,11 @@ NAME = ft_ping
 
 PARSER = ft_parse_addr.c
 SOLVER = ft_ping_icmp_echo_req.c
-HELPER_FUNC = helper_func.c icmp_helper.c ft_print_helper.c
+HELPER_FUNC = helper_func.c icmp_helper.c
+PRINT = ft_print.c ft_print_helper.c
 MAIN = ping.c
 
-SRC = $(PARSER) $(SOLVER) $(HELPER_FUNC) $(MAIN)
+SRC = $(PARSER) $(SOLVER) $(HELPER_FUNC) $(PRINT) $(MAIN)
 OBJ = $(SRC:.c=.o)
 
 INC = ping.h

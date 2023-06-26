@@ -22,6 +22,9 @@
 
 # define FT_ICMP_HDR 8
 # define FT_ICMP_DATA_SIZE 56
+# define FT_IP_HDR sizeof(struct iphdr)
+# define FT_INVALID_DSIZE 0b1
+# define FT_ERR_DUP 0b10
 
 typedef struct s_icmp
 {
@@ -39,9 +42,13 @@ typedef struct s_icmp
 typedef struct s_icmp_info
 {
 	t_icmp			req;
-	t_icmp			res;
-	char			src_addr[INET_ADDRSTRLEN];
-	char			dst_addr[INET_ADDRSTRLEN];
+	t_icmp			rep;
+	uint8_t			*reply;
+	uint8_t			*wrong_bytes;
+	uint16_t		err_flags;
+	size_t			msg_size;
+	char			rep_src_addr[INET_ADDRSTRLEN];
+	char			rep_dst_addr[INET_ADDRSTRLEN];
 	uint8_t			ttl;
 	double			triptime;
 }					t_icmp_info;
