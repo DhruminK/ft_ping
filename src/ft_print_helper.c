@@ -1,4 +1,4 @@
-#include "ping.h"
+#include "icmp.h"
 
 void	ft_ping_iphdr(struct ip *ip)
 {
@@ -54,4 +54,42 @@ void	ft_print_ip_hdr_dump(uint8_t *iphdr)
 		printf("%x", iphdr[i]);
 	}
 	printf("\n");
+}
+
+void	ft_print_ping_info(t_icmp_info *info, uint8_t flag)
+{
+	uint16_t	pid;
+
+	if (!info)
+		return ;
+	printf("PING %s (%s): %ld data bytes", info->arg,
+			info->req_dst_addr, info->req.data_size);
+	if (flag & FT_PING_VERBOSE)
+	{
+		pid = getpid() & 0xFFFF;
+		printf(", id %#x = %u", pid, pid);
+	}
+	printf("\n");
+}
+
+void	ft_print_stats(t_icmp_stats *stats)
+{
+	size_t	p_loss_per;
+	double	stdev;
+	double	avg;
+
+	if (!stats)
+		return ;
+	avg = stats->t_sum / stats->num_packets_recv;
+	stdev = (stats->vari / stats->num_packets_recv) - (avg * avg);
+	if (ft_newton(stdev, 2, &stdev) == -1)
+		return ;
+	printf("--- %s ping statistics ---\n", stats->arg);
+	p_loss_per = (uint16_t)(((stats->num_packets - stats->num_packets_recv)
+				/ ((double)(stats->num_packets))) * 100);
+	printf("%ld packets transmited, %ld packets recieved, %ld%% packet loss\n",
+			stats->num_packets, stats->num_packets_recv, p_loss_per);
+	if (stats->num_packets_recv != 0)
+		printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n",
+				stats->t_min, avg, stats->t_max, stdev);
 }

@@ -95,6 +95,8 @@ void	ft_print_helper(t_icmp_info *info, uint8_t flag)
 		return ;
 	if (info->rep.type != ICMP_ECHOREPLY)
 		return (ft_print_error(info, flag));
+	if (flag | FT_PING_QUIET)
+		return ;
 	printf("%ld bytes from %s: icmp_seq=%d ",
 		info->rep.data_size, info->rep_dst_addr, info->rep.seq);
 	printf("ttl=%d time=%.3f ms\n", info->ttl, info->triptime);
