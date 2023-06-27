@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/27 18:04:28 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/27 18:04:29 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "icmp.h"
 
 static int	ft_start_ping(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
@@ -5,7 +17,7 @@ static int	ft_start_ping(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 	if (!stats || !info)
 		return (-1);
 	ft_print_ping_info(info, stats->flag);
-	while (sig_handler != SIGINT)
+	while (g_sig_handler != SIGINT)
 		ft_ping_once(sock_fd, stats, info);
 	ft_print_stats(stats);
 	return (0);

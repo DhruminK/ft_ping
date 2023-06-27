@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:28:39 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/26 18:53:21 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/27 18:00:52 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 
 # define FT_ICMP_HDR 8
 # define FT_ICMP_DATA_SIZE 56
-# define FT_IP_HDR sizeof(struct iphdr)
+# define FT_IP_HDR 20
 # define FT_INVALID_DSIZE 0b1
 # define FT_ERR_DUP 0b10
 # define FT_RECV_MSG ((FT_IP_HDR + FT_ICMP_HDR) * 2) + (FT_ICMP_DATA_SIZE + 1)
@@ -85,7 +85,7 @@ typedef struct s_icmp_stats
 	uint8_t			flag;
 }					t_icmp_stats;
 
-extern int			sig_handler;
+extern int			g_sig_handler;
 
 void				*ft_memcpy(void *dst, void *src, size_t n);
 void				*ft_memset(void *b, int c, size_t n);
@@ -109,7 +109,8 @@ void				ft_print_stats(t_icmp_stats *stats);
 int					ft_newton(double val, uint16_t pow, double *out);
 double				ft_pow(double val, int n);
 
-int					ft_ping_once(int sock_fd, t_icmp_stats *stats, t_icmp_info *info);
+int					ft_ping_once(int sock_fd, t_icmp_stats *stats,
+						t_icmp_info *info);
 
 int					ft_socket_init(char *arg, t_icmp_stats *stats,
 						t_icmp_info *info, uint8_t flag);

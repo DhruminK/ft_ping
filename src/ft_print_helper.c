@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_print_helper.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/27 18:03:32 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/27 18:04:16 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "icmp.h"
 
 void	ft_ping_iphdr(struct ip *ip)
@@ -11,15 +23,15 @@ void	ft_ping_iphdr(struct ip *ip)
 	cp = (char *)ip + 20;
 	hlen = ip->ip_hl << 2;
 	printf("Vr HL TOS  Len   ID Flg  off TTL Pro"
-			"  cks      Src      Dst     Data\n");
+		"  cks      Src      Dst     Data\n");
 	printf(" %x  %x  %02x %04x %04x",
-			ip->ip_v, ip->ip_hl, ip->ip_tos,
-			ntohs(ip->ip_len), ntohs(ip->ip_id));
+		ip->ip_v, ip->ip_hl, ip->ip_tos,
+		ntohs(ip->ip_len), ntohs(ip->ip_id));
 	printf("   %1x %04lx",
-			(uint32_t)(ntohs(ip->ip_off) & 0xe000) >> 13,
-			(long unsigned int)(ntohs(ip->ip_off) & 0x1fff));
+		(uint32_t)(ntohs(ip->ip_off) & 0xe000) >> 13,
+		(long unsigned int)(ntohs(ip->ip_off) & 0x1fff));
 	printf("  %02x  %02x %04x", ip->ip_ttl, ip->ip_p,
-			(ntohs(ip->ip_sum)));
+		(ntohs(ip->ip_sum)));
 	printf(" %s ", inet_ntop(AF_INET,
 			&(ip->ip_src), buf, INET_ADDRSTRLEN));
 	printf(" %s ", inet_ntop(AF_INET,
@@ -63,7 +75,7 @@ void	ft_print_ping_info(t_icmp_info *info, uint8_t flag)
 	if (!info)
 		return ;
 	printf("PING %s (%s): %ld data bytes", info->arg,
-			info->req_dst_addr, info->req.data_size);
+		info->req_dst_addr, info->req.data_size);
 	if (flag & FT_PING_VERBOSE)
 	{
 		pid = getpid() & 0xFFFF;
@@ -88,8 +100,8 @@ void	ft_print_stats(t_icmp_stats *stats)
 	p_loss_per = (uint16_t)(((stats->num_packets - stats->num_packets_recv)
 				/ ((double)(stats->num_packets))) * 100);
 	printf("%ld packets transmited, %ld packets recieved, %ld%% packet loss\n",
-			stats->num_packets, stats->num_packets_recv, p_loss_per);
+		stats->num_packets, stats->num_packets_recv, p_loss_per);
 	if (stats->num_packets_recv != 0)
 		printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n",
-				stats->t_min, avg, stats->t_max, stdev);
+			stats->t_min, avg, stats->t_max, stdev);
 }

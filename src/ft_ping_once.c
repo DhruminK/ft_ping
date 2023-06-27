@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_ping_once.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/27 17:49:03 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/27 18:02:53 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "icmp.h"
 
-int	sig_handler = 0;
+int	g_sig_handler = 0;
 
 void	*signalhandler(int signo)
 {
-	sig_handler = signo;
+	g_sig_handler = signo;
 	return (0);
 }
 
@@ -25,9 +37,9 @@ static int	ft_recv_msg_helper(int sock_fd, struct msghdr *msghdr,
 		return (-1);
 	ip = (struct ip *)(info->reply);
 	inet_ntop(AF_INET, (void *)&(ip->ip_src), info->rep_src_addr,
-			INET_ADDRSTRLEN);
+		INET_ADDRSTRLEN);
 	inet_ntop(AF_INET, (void *)&(ip->ip_dst), info->rep_dst_addr,
-			INET_ADDRSTRLEN);
+		INET_ADDRSTRLEN);
 	info->ttl = ip->ip_ttl;
 	return (ft_icmp_process_icmp_reply(stats, info, stats->flag));
 }
@@ -46,11 +58,12 @@ static int	ft_recv_msg(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 	msghdr.msg_iov = &iov;
 	msghdr.msg_iovlen = 1;
 	ret = 0;
-	while (sig_handler != SIGALRM && sig_handler != SIGINT && !ret)
+	while (g_sig_handler != SIGALRM && g_sig_handler != SIGINT && !ret)
 		ret = ft_recv_msg_helper(sock_fd, &msghdr, stats, info);
 	if (ret == -1)
 	{
-		printf("recvmsg error : errno %d, message : %s\n", errno, strerror(errno));
+		printf("recvmsg error : errno %d, message : %s\n",
+			errno, strerror(errno));
 		return (-1);
 	}
 	return (ret);
@@ -75,8 +88,8 @@ static int	ft_send_msg(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 	free(msg);
 	if (nb == -1 && errno == EACCES)
 		printf("ft_ping: socket access error. Are you trying to ping"
-				"broadcast ?\n");
-	else
+			"broadcast ?\n");
+	else if (nb == -1)
 		printf("sendto err: %s\n", strerror(errno));
 	if (nb == -1)
 		return (-1);

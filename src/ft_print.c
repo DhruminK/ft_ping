@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_print.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/27 18:03:02 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/27 18:03:21 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ping.h"
 
 static void	ft_print_destination_unreachable(uint8_t code)
@@ -76,9 +88,9 @@ static void	ft_print_error(t_icmp_info *info, uint8_t flag)
 			sizeof(s_in), host_name, 100, 0, 0, 0))
 		return ;
 	printf("%ld bytes from %s (%s): ", info->msg_size - sizeof(struct iphdr),
-			host_name, info->rep_src_addr);
+		host_name, info->rep_src_addr);
 	ft_print_error_helper(info->rep.type, info->rep.code);
-	if (info && info->reply && (flag & FT_PING_VERBOSE))
+	if (info && (flag & FT_PING_VERBOSE))
 	{
 		ft_print_ip_hdr_dump(info->reply);
 		ft_ping_iphdr((struct ip *)(info->reply));
@@ -104,14 +116,14 @@ void	ft_print_helper(t_icmp_info *info, uint8_t flag)
 		printf(" (DUP!)");
 	if (info->err_flags & FT_INVALID_DSIZE)
 		printf("\nWrong total length %ld instead of %ld",
-				info->req.data_size + sizeof(struct icmphdr),
-				info->msg_size - sizeof(struct ip));
+			info->req.data_size + sizeof(struct icmphdr),
+			info->msg_size - sizeof(struct ip));
 	i = 0;
 	while (i < info->req.data_size)
 	{
-		if (info->wrong_bytes)
+		if (info->wrong_bytes[i])
 			printf("\nwrong data byte #%ld should be %#x but was %#x",
-					i, info->req.data[i], info->rep.data[i]);
+				i, info->req.data[i], info->rep.data[i]);
 		i += 1;
 	}
 }

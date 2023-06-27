@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 18:52:51 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/26 19:11:38 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/27 18:01:07 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,5 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include "icmp.h"
-
-
 
 #endif
