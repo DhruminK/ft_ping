@@ -38,8 +38,19 @@
 # define FT_IP_TTL 64
 # define FT_RECV_MSG 200
 
+# define FT_ARG_DOUBLE_HOST -2
+# define FT_ARG_INV_EQUAL -3
+# define FT_ARG_INVALID_ARG -4
+# define FT_ARG_INVALID_ARG_WHOLE -5
+# define FT_ARG_MISSING_HOST -6
+# define FT_ROOT_PER_REQ 0
+# define FT_UNKOWN_HOST 64
+
 # define FT_PING_VERBOSE 0x1
 # define FT_PING_QUIET 0x2
+# define FT_PING_PACK_SIZE 0x4
+# define FT_PING_TTL 0x6
+# define FT_PING_HELP 0x8
 
 typedef struct s_icmp
 {
@@ -84,12 +95,17 @@ typedef struct s_icmp_stats
 	double			vari;
 	uint16_t		uid;
 	uint8_t			flag;
+	uint8_t			ttl;
 }					t_icmp_stats;
 
 extern int			g_sig_handler;
 
 void				*ft_memcpy(void *dst, void *src, size_t n);
 void				*ft_memset(void *b, int c, size_t n);
+int					ft_strcmp(char *s1, char *s2);
+int					ft_strncmp(const char *s1, const char *s2, size_t n);
+size_t				ft_strlen(const char *s);
+int					ft_atoi(char *str);
 
 void				ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val, uint8_t num_bytes);
 void				ft_icmp_cadd16(uint16_t *c1, uint16_t c2);
@@ -106,6 +122,7 @@ void				ft_ping_icmphdr(struct icmphdr *hdr, size_t data_size);
 void				ft_print_ip_hdr_dump(uint8_t *iphdr);
 void				ft_print_ping_info(t_icmp_info *info, uint8_t flag);
 void				ft_print_stats(t_icmp_stats *stats);
+int					ft_print_arg_error(int ret, char *val);
 
 int					ft_newton(double val, uint16_t pow, double *out);
 double				ft_pow(double val, int n);
@@ -113,12 +130,12 @@ double				ft_pow(double val, int n);
 int					ft_ping_once(int sock_fd, t_icmp_stats *stats,
 						t_icmp_info *info);
 
-int					ft_socket_init(char *arg, t_icmp_stats *stats,
-						t_icmp_info *info, uint8_t flag);
+int					ft_socket_init(t_icmp_stats *stats, t_icmp_info *info);
 
 int					ft_ping_once(int sock_fd,
 						t_icmp_stats *stats, t_icmp_info *info);
 
 void				signalhandler(int signo);
+int					ft_parse_args(int ac, char **av, t_icmp_stats *stats);
 
 #endif

@@ -30,13 +30,15 @@ static int	ft_start_ping(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 	return (0);
 }
 
-static int	ft_error_ret(int err_no, int ret)
+static int	ft_print_help(void)
 {
-	if (err_no == 64)
-		printf("ft_ping: unkown host\n");
-	if (err_no == 0)
-		printf("ft_ping: usage error: need to be run as root\n");
-	return (ret);
+	printf("Usage: ft_ping [OPTION...] HOST ...\n");
+	printf("Send ICMP ECHO_REQUEST packets to network hosts.\n\n");
+	printf("Options valid for all request types:\n");
+	printf(" --ttl=N\t\tspecify N as time-to-live\n");
+	printf(" -q\t\t\tquiet output\n");
+	printf(" -?, --help\t\tgive this help list\n");
+	return (0);
 }
 
 int	main(int ac, char **av)
@@ -46,13 +48,15 @@ int	main(int ac, char **av)
 	int				sock_fd;
 	int				ret;
 
-	if (ac != 2)
-		return (64);
 	if (getuid() != 0)
-		return (ft_error_ret(0, 0));
-	sock_fd = ft_socket_init(av[1], &stats, &info, FT_PING_VERBOSE);
+		return (ft_print_arg_error(FT_ROOT_PER_REQ, 0));
+	if (ft_parse_args(ac - 1, av + 1, &stats) < 0)
+		return (1);
+	if (stats.flag & FT_PING_HELP)
+		return (ft_print_help());
+	sock_fd = ft_socket_init(&stats, &info);
 	if (sock_fd < 0)
-		return (ft_error_ret(64, 64));
+		return (ft_print_arg_error(FT_UNKOWN_HOST, 0));
 	ret = ft_start_ping(sock_fd, &stats, &info);
 	close(sock_fd);
 	if (ret < 0 || stats.num_packets_recv > 0)

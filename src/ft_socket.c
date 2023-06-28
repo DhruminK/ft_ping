@@ -65,23 +65,19 @@ int	ft_socket_opt(int ttl)
 	return (-1);
 }
 
-int	ft_socket_init(char *arg, t_icmp_stats *stats,
-		t_icmp_info *info, uint8_t flag)
+int	ft_socket_init(t_icmp_stats *stats, t_icmp_info *info)
 {
 	if (!stats || !info)
 		return (-1);
-	ft_memset(stats, 0, sizeof(t_icmp_stats));
 	ft_memset(info, 0, sizeof(t_icmp_info));
 	stats->t_min = 2000;
 	stats->t_max = 0;
 	stats->uid = getuid();
-	stats->arg = arg;
-	stats->flag = flag;
-	info->arg = arg;
-	if (ft_parse_host(arg, info) == -1)
+	info->arg = stats->arg;
+	if (ft_parse_host(stats->arg, info) == -1)
 	{
 		printf("ft_ping: malloc Error\n");
 		return (-1);
 	}
-	return (ft_socket_opt(FT_IP_TTL));
+	return (ft_socket_opt(stats->ttl));
 }
