@@ -49,6 +49,22 @@ static int	ft_parse_host(char *arg, t_icmp_info *info)
 	return (ft_ping_parse_addrinfo(info));
 }
 
+int	ft_socket_opt(int ttl)
+{
+	int	sock_fd;
+
+	if (ttl < 0)
+		return (-1);
+	sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	if (sock_fd < 0)
+		return (-1);
+	if (setsockopt(sock_fd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) == 0)
+		return (sock_fd);
+	printf("ft_ping: setsockopt error: %s\n", strerror(errno));
+	close(sock_fd);
+	return (-1);
+}
+
 int	ft_socket_init(char *arg, t_icmp_stats *stats,
 		t_icmp_info *info, uint8_t flag)
 {
@@ -67,5 +83,5 @@ int	ft_socket_init(char *arg, t_icmp_stats *stats,
 		printf("ft_ping: malloc Error\n");
 		return (-1);
 	}
-	return (socket(AF_INET, SOCK_RAW, IPPROTO_ICMP));
+	return (ft_socket_opt(FT_IP_TTL));
 }

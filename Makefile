@@ -23,7 +23,7 @@ MAIN = main.c
 SRC = $(PARSER) $(SOLVER) $(HELPER_FUNC) $(PRINT) $(MAIN)
 OBJ = $(SRC:.c=.o)
 
-INC = ping.h
+INC = ping.h icmp.h
 INCLUDES = -I include/
 
 SRC_PATH = src/

@@ -14,10 +14,9 @@
 
 int	g_sig_handler = 0;
 
-void	*signalhandler(int signo)
+void	signalhandler(int signo)
 {
 	g_sig_handler = signo;
-	return (0);
 }
 
 static int	ft_recv_msg_helper(int sock_fd, struct msghdr *msghdr,
@@ -41,6 +40,7 @@ static int	ft_recv_msg_helper(int sock_fd, struct msghdr *msghdr,
 	inet_ntop(AF_INET, (void *)&(ip->ip_dst), info->rep_dst_addr,
 		INET_ADDRSTRLEN);
 	info->ttl = ip->ip_ttl;
+	info->msg_size = bytes_recv;
 	return (ft_icmp_process_icmp_reply(stats, info, stats->flag));
 }
 
@@ -52,8 +52,9 @@ static int	ft_recv_msg(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 
 	if (!stats || !info || sock_fd < 1)
 		return (-1);
-	iov.iov_base = (void *)(info->reply);
+	iov.iov_base = info->reply;
 	iov.iov_len = FT_RECV_MSG;
+	ft_memset(iov.iov_base, 0, FT_RECV_MSG);
 	ft_memset(&msghdr, 0, sizeof(struct msghdr));
 	msghdr.msg_iov = &iov;
 	msghdr.msg_iovlen = 1;
@@ -102,9 +103,12 @@ int	ft_ping_once(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 
 	if (!stats || !info || sock_fd < 0)
 		return (-1);
+	if (g_sig_handler != SIGALRM)
+		return (0);
 	ft_memset(&(info->req), 0, sizeof(t_icmp));
 	ft_memset(&(info->rep), 0, sizeof(t_icmp));
 	ret = ft_send_msg(sock_fd, stats, info);
+	g_sig_handler = 0;
 	if (!ret)
 		alarm(1);
 	if (!ret)
@@ -113,5 +117,5 @@ int	ft_ping_once(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 	free(info->rep.data);
 	ft_memset(&(info->req), 0, sizeof(t_icmp));
 	ft_memset(&(info->rep), 0, sizeof(t_icmp));
-	return (0);
+	return (ret);
 }

@@ -16,9 +16,16 @@ static int	ft_start_ping(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 {
 	if (!stats || !info)
 		return (-1);
+	signal(SIGALRM, signalhandler);
+	signal(SIGINT, signalhandler);
+	info->req.data_size = FT_ICMP_DATA_SIZE;
 	ft_print_ping_info(info, stats->flag);
+	g_sig_handler = SIGALRM;
 	while (g_sig_handler != SIGINT)
-		ft_ping_once(sock_fd, stats, info);
+	{
+		if (ft_ping_once(sock_fd, stats, info) == -1)
+			return (-1);
+	}
 	ft_print_stats(stats);
 	return (0);
 }
@@ -46,10 +53,9 @@ int	main(int ac, char **av)
 	sock_fd = ft_socket_init(av[1], &stats, &info, FT_PING_VERBOSE);
 	if (sock_fd < 0)
 		return (ft_error_ret(64, 64));
-	ret = 0;
-	ft_start_ping(sock_fd, &stats, &info);
+	ret = ft_start_ping(sock_fd, &stats, &info);
 	close(sock_fd);
-	if (stats.num_packets_recv > 0)
+	if (ret < 0 || stats.num_packets_recv > 0)
 		ret = 1;
 	return (ret);
 }

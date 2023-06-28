@@ -28,37 +28,40 @@ void	ft_icmp_checksum(uint8_t *buf, size_t buf_size, uint16_t *checksum)
 {
 	size_t		i;
 	uint16_t	ret;
+	uint16_t	ret1;
 
-	if (!buf || !checksum || !buf_size)
+	if (!buf || !buf_size || !checksum)
 		return ;
 	*checksum = 0;
+	ret1 = 0;
 	i = 0;
 	while (i < buf_size)
 	{
 		ret = 0;
 		if (i != buf_size - 1)
 			ret = buf[i + 1];
-		ft_icmp_cadd16(checksum, (((uint16_t)buf[i]) << 8) | ret);
+		ret = (((uint16_t)buf[i]) << 8) | ret;
+		ft_icmp_cadd16(&ret1, ret);
 		i += 2;
 	}
-	*checksum = ~(*checksum);
-	*checksum = htons(*checksum);
+	ret1 = ~ret1;
+	*checksum = htons(ret1);
 }
 
-void	ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val)
+void	ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val, uint8_t num_bytes)
 {
 	int		i;
 	uint8_t	*v;
 
-	if (!msg)
+	if (!msg || (num_bytes < 2 || num_bytes >8))
 		return ;
 	v = (uint8_t *)&val;
 	if (BYTE_ORDER == BIG_ENDIAN)
-		ft_memcpy(msg, v, sizeof(uint8_t) * 8);
+		ft_memcpy(msg, v, sizeof(uint8_t) * num_bytes);
 	else
 	{
 		i = -1;
-		while (++i < 8)
-			msg[7 - i] = v[i];
+		while (++i < num_bytes)
+			msg[num_bytes - 1 - i] = v[i];
 	}
 }

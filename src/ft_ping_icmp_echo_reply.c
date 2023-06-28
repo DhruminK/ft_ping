@@ -24,7 +24,7 @@ static int	ft_icmp_init_echo_reply_hdr(uint8_t *msg, size_t msg_size,
 	reply->seq = ntohs(*((uint16_t *)(msg + 6)));
 	reply->data_size = msg_size - FT_ICMP_HDR;
 	reply->data = (uint8_t *)malloc(sizeof(uint8_t) * reply->data_size);
-	if (!reply->data)
+	if (!(reply->data))
 		return (-1);
 	ft_memcpy(reply->data, msg + FT_ICMP_HDR,
 		sizeof(uint8_t) * reply->data_size);
@@ -84,7 +84,7 @@ static void	ft_process_stats(t_icmp_stats *stats, t_icmp_info *info)
 		return ;
 	reply = &(info->rep);
 	rep_time = (reply->tv.tv_sec * 1000 * 1000) + (reply->tv.tv_usec);
-	req_time = (info->req.tv.tv_sec * 1000 * 1000) + (info->rep.tv.tv_usec);
+	req_time = (info->req.tv.tv_sec * 1000 * 1000) + (info->req.tv.tv_usec);
 	info->triptime = (rep_time - req_time) / 1000;
 	if (reply->type != ICMP_ECHOREPLY)
 		return ;

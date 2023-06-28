@@ -35,7 +35,8 @@
 # define FT_IP_HDR 20
 # define FT_INVALID_DSIZE 0b1
 # define FT_ERR_DUP 0b10
-# define FT_RECV_MSG ((FT_IP_HDR + FT_ICMP_HDR) * 2) + (FT_ICMP_DATA_SIZE + 1)
+# define FT_IP_TTL 64
+# define FT_RECV_MSG 200
 
 # define FT_PING_VERBOSE 0x1
 # define FT_PING_QUIET 0x2
@@ -90,7 +91,7 @@ extern int			g_sig_handler;
 void				*ft_memcpy(void *dst, void *src, size_t n);
 void				*ft_memset(void *b, int c, size_t n);
 
-void				ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val);
+void				ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val, uint8_t num_bytes);
 void				ft_icmp_cadd16(uint16_t *c1, uint16_t c2);
 void				ft_icmp_checksum(uint8_t *buf,
 						size_t buf_size, uint16_t *checksum);
@@ -117,5 +118,7 @@ int					ft_socket_init(char *arg, t_icmp_stats *stats,
 
 int					ft_ping_once(int sock_fd,
 						t_icmp_stats *stats, t_icmp_info *info);
+
+void				signalhandler(int signo);
 
 #endif

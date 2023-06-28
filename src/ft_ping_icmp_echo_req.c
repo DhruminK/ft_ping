@@ -18,16 +18,18 @@ static int	ft_ping_add_timestamp(t_icmp *req, uint8_t *msg)
 		return (-1);
 	if (gettimeofday(&(req->tv), 0) == -1)
 		return (-1);
-	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR, req->tv.tv_sec);
-	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR + sizeof(uint64_t),
-		req->tv.tv_usec);
+	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR, req->tv.tv_sec, sizeof(req->tv.tv_sec));
+	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR + sizeof(req->tv.tv_sec),
+		req->tv.tv_usec, sizeof(req->tv.tv_usec));
 	ft_memcpy(req->data, msg + FT_ICMP_HDR, sizeof(uint64_t) * 2);
 	return (0);
 }
 
-static void	ft_icmp_init_echo_hdr(uint8_t *msg, t_icmp *req)
+static void	ft_icmp_init_echo_hdr(uint8_t *msg, size_t size, t_icmp *req)
 {
 	uint16_t	*tmp;
+	uint8_t		*data;
+	size_t		n;
 
 	if (!msg || !req)
 		return ;
@@ -39,6 +41,13 @@ static void	ft_icmp_init_echo_hdr(uint8_t *msg, t_icmp *req)
 	*tmp = htons(req->id);
 	tmp = (uint16_t *)(msg + 6);
 	*tmp = htons(req->seq);
+	data = (msg + FT_ICMP_HDR);
+	n = sizeof(struct timeval);
+	while (n < size)
+	{
+		data[n] = n + 1 - sizeof(struct timeval);
+		n += 1;
+	}
 }
 
 int	ft_ping_create_icmp_req(uint8_t **msg, t_icmp *req)
@@ -55,8 +64,8 @@ int	ft_ping_create_icmp_req(uint8_t **msg, t_icmp *req)
 	*msg = (uint8_t *)malloc(sizeof(uint8_t) * p_size);
 	if (!*msg)
 		return (-1);
+	ft_icmp_init_echo_hdr(*msg, req->data_size, req);
 	ft_memcpy(req->data, *msg + FT_ICMP_HDR, sizeof(uint8_t) * req->data_size);
-	ft_icmp_init_echo_hdr(*msg, req);
 	if (ft_ping_add_timestamp(req, *msg) == -1)
 		return (-1);
 	checksum = (uint16_t *)((*msg) + 2);
