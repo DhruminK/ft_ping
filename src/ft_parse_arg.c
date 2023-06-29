@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_parse_arg.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/29 12:01:02 by dkhatri           #+#    #+#             */
+/*   Updated: 2023/06/29 12:01:37 by dkhatri          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "icmp.h"
 
 static int	ft_parse_double_dash(char *av, t_icmp_stats *stats)
@@ -63,8 +75,6 @@ int	ft_parse_args(int ac, char **av, t_icmp_stats *stats)
 	if (!stats || !av)
 		return (-1);
 	ft_memset(stats, 0, sizeof(t_icmp_stats));
-	stats->flag = 0;
-	stats->arg = 0;
 	stats->ttl = FT_IP_TTL;
 	i = -1;
 	while (++i < ac)

@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 18:03:32 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/27 18:04:16 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 13:33:24 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ void	ft_ping_iphdr(struct ip *ip)
 	printf("\n");
 }
 
-void	ft_ping_icmphdr(struct icmphdr *hdr, size_t data_size)
+void	ft_ping_icmphdr(t_icmp *icmp)
 {
-	if (!hdr)
+	if (!icmp)
 		return ;
 	printf("ICMP: type %d, code %d, size %ld",
-		hdr->type, hdr->code, data_size);
-	printf(", id %#x, seq %#x\n",
-		ntohs(hdr->un.echo.id), ntohs(hdr->un.echo.sequence));
+		icmp->type, icmp->code, icmp->data_size + FT_ICMP_HDR);
+	printf(", id 0x%04x, seq 0x%04x\n",
+		icmp->id, icmp->seq);
 }
 
 void	ft_print_ip_hdr_dump(uint8_t *iphdr)
@@ -61,9 +61,10 @@ void	ft_print_ip_hdr_dump(uint8_t *iphdr)
 	i = 0;
 	while (i < FT_IP_HDR)
 	{
-		if (!i && !(i % 2))
+		if (i && !(i % 2))
 			printf(" ");
-		printf("%x", iphdr[i]);
+		printf("%02x", iphdr[i]);
+		i += 1;
 	}
 	printf("\n");
 }

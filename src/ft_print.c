@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 18:03:02 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/27 18:03:21 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 13:30:03 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,7 @@ static void	ft_print_error(t_icmp_info *info, uint8_t flag)
 	{
 		ft_print_ip_hdr_dump(info->reply);
 		ft_ping_iphdr((struct ip *)(info->reply));
-		ft_ping_icmphdr((struct icmphdr *)(info->reply + FT_IP_HDR),
-			info->msg_size - FT_IP_HDR - FT_ICMP_HDR);
+		ft_ping_icmphdr(&(info->rep));
 	}
 }
 
@@ -109,8 +108,8 @@ void	ft_print_helper(t_icmp_info *info, uint8_t flag)
 		return (ft_print_error(info, flag));
 	if (flag & FT_PING_QUIET)
 		return ;
-	printf("%ld bytes from %s: icmp_seq=%d ",
-		info->msg_size - sizeof(struct iphdr), info->rep_dst_addr, info->rep.seq);
+	printf("%ld bytes from %s: icmp_seq=%d ", info->msg_size
+		- sizeof(struct iphdr), info->req_dst_addr, info->rep.seq);
 	printf("ttl=%d time=%.3f ms\n", info->ttl, info->triptime);
 	if (info->err_flags & FT_ERR_DUP)
 		printf(" (DUP!)");

@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:06:40 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/26 14:40:07 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 12:02:09 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ static int	ft_ping_add_timestamp(t_icmp *req, uint8_t *msg)
 		return (-1);
 	if (gettimeofday(&(req->tv), 0) == -1)
 		return (-1);
-	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR, req->tv.tv_sec, sizeof(req->tv.tv_sec));
+	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR,
+		req->tv.tv_sec, sizeof(req->tv.tv_sec));
 	ft_ping_64bit_little_endian((msg) + FT_ICMP_HDR + sizeof(req->tv.tv_sec),
 		req->tv.tv_usec, sizeof(req->tv.tv_usec));
 	ft_memcpy(req->data, msg + FT_ICMP_HDR, sizeof(uint64_t) * 2);

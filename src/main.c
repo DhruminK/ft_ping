@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 18:04:28 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/27 18:04:29 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 13:38:44 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static int	ft_start_ping(int sock_fd, t_icmp_stats *stats, t_icmp_info *info)
 			return (-1);
 	}
 	ft_print_stats(stats);
+	if (info->start_res)
+		freeaddrinfo(info->start_res);
 	return (0);
 }
 

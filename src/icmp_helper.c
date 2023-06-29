@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 13:35:38 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/26 14:26:43 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 12:05:05 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,13 @@ void	ft_icmp_checksum(uint8_t *buf, size_t buf_size, uint16_t *checksum)
 	*checksum = htons(ret1);
 }
 
-void	ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val, uint8_t num_bytes)
+void	ft_ping_64bit_little_endian(uint8_t *msg,
+			uint64_t val, uint8_t num_bytes)
 {
 	int		i;
 	uint8_t	*v;
 
-	if (!msg || (num_bytes < 2 || num_bytes >8))
+	if (!msg || (num_bytes < 2 || num_bytes > 8))
 		return ;
 	v = (uint8_t *)&val;
 	if (BYTE_ORDER == BIG_ENDIAN)

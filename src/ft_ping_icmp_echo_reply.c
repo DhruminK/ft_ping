@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:45:41 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/26 15:14:02 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 12:22:54 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static void	ft_process_stats(t_icmp_stats *stats, t_icmp_info *info)
 	reply = &(info->rep);
 	rep_time = (reply->tv.tv_sec * 1000 * 1000) + (reply->tv.tv_usec);
 	req_time = (info->req.tv.tv_sec * 1000 * 1000) + (info->req.tv.tv_usec);
-	info->triptime = (rep_time - req_time) / 1000;
+	info->triptime = ((double)(rep_time - req_time)) / 1000;
 	if (reply->type != ICMP_ECHOREPLY)
 		return ;
 	stats->num_packets_recv += 1;

@@ -6,7 +6,7 @@
 /*   By: dkhatri <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:28:39 by dkhatri           #+#    #+#             */
-/*   Updated: 2023/06/27 18:00:52 by dkhatri          ###   ########.fr       */
+/*   Updated: 2023/06/29 13:12:18 by dkhatri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,8 @@ int					ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t				ft_strlen(const char *s);
 int					ft_atoi(char *str);
 
-void				ft_ping_64bit_little_endian(uint8_t *msg, uint64_t val, uint8_t num_bytes);
+void				ft_ping_64bit_little_endian(uint8_t *msg,
+						uint64_t val, uint8_t num_bytes);
 void				ft_icmp_cadd16(uint16_t *c1, uint16_t c2);
 void				ft_icmp_checksum(uint8_t *buf,
 						size_t buf_size, uint16_t *checksum);
@@ -118,7 +119,7 @@ int					ft_icmp_process_icmp_reply(t_icmp_stats *stats,
 void				ft_print_helper(t_icmp_info *info, uint8_t flag);
 
 void				ft_ping_iphdr(struct ip *ip);
-void				ft_ping_icmphdr(struct icmphdr *hdr, size_t data_size);
+void				ft_ping_icmphdr(t_icmp *icmp);
 void				ft_print_ip_hdr_dump(uint8_t *iphdr);
 void				ft_print_ping_info(t_icmp_info *info, uint8_t flag);
 void				ft_print_stats(t_icmp_stats *stats);
